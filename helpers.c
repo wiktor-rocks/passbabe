@@ -8,12 +8,57 @@
 
 #define ARRAY_SIZE 1024
 
+
 typedef struct
 {
     char entry[ARRAY_SIZE];
     char username[ARRAY_SIZE];
     char password[ARRAY_SIZE];
 } Entries;
+
+enum Option {
+    DATABASE_FILE,
+    DATABASE_DIR,
+    CONFIG,
+    PB_DIR,
+    HOME
+} Option;
+
+char *get_location(enum Option option)
+{
+    char *home_dir = getenv("HOME");
+
+    char* location = malloc(ARRAY_SIZE * sizeof(char)); 
+
+    if (location == NULL)
+    {
+        return NULL;
+    } 
+
+    switch(option) {
+        case DATABASE_FILE:
+            snprintf(location, ARRAY_SIZE, "%s/.config/passbabe/databases/database.pbdb", home_dir);
+            break;
+        case DATABASE_DIR:
+            snprintf(location, ARRAY_SIZE, "%s/.config/passbabe/databases", home_dir);
+            break;
+        case CONFIG:
+            snprintf(location, ARRAY_SIZE, "%s/.config/passbabe/passbabe.conf", home_dir);
+            break;
+        case PB_DIR:
+            snprintf(location, ARRAY_SIZE, "%s/.config/passbabe", home_dir);
+            break;
+        case HOME:
+            snprintf(location, ARRAY_SIZE, "%s", home_dir);
+            break;
+        default:
+            free(location);
+            return NULL;
+    }
+
+    return location;
+        
+}
 
 bool quit_stuff()
 {
@@ -32,76 +77,64 @@ bool quit_stuff()
     }
 }
 
-char *read_config()
-{
-
-    char *home_dir = getenv("HOME");
-
-    char full_path[ARRAY_SIZE];
-    snprintf(full_path, sizeof(full_path), "%s/.config/passbabe/", home_dir);
-
-    strcat(full_path, "passbabe.conf");
-    // read the database name from config file
-    FILE *config_file = fopen(full_path, "r");
-
-    char *buffer = malloc(ARRAY_SIZE * sizeof(char));
-    int i = 0;
-    char ch;
-    while ((ch = fgetc(config_file)) != EOF && i < ARRAY_SIZE - 1)
-    {
-        buffer[i] = ch;
-        i++;
-    }
-    buffer[i] = '\0';
-    fclose(config_file);
-
-    return buffer;
-}
 
 void create_db_dir()
 {
 
-    char *home_dir = getenv("HOME");
-
-    char full_path[ARRAY_SIZE];
-    snprintf(full_path, sizeof(full_path), "%s/.config/passbabe", home_dir);
-
-    mkdir(full_path, 0777);
-
-    snprintf(full_path, sizeof(full_path), "%s/.config/passbabe/passbabe.conf", home_dir);
-
-    snprintf(full_path, sizeof(full_path), "%s/.config/passbabe/databases", home_dir);
+    char *full_path = get_location(PB_DIR);
+    char *database_dir = get_location(DATABASE_DIR);  
+    char *database_file_name = get_location(DATABASE_FILE);
+    char *config_location = get_location(CONFIG);
 
     mkdir(full_path, 0777);
+    mkdir(database_dir, 0777);
+    
+    free(full_path);
 
-    FILE *config_file = fopen(full_path, "r");
+    FILE *database_file = fopen(database_file_name, "r");
+
+    if (database_file != NULL)
+    {
+        fclose(database_file);
+        free(database_file_name);
+    }
+    else
+    {
+        database_file= fopen(database_file_name, "w");
+        free(database_file_name);
+        if (database_file == NULL)
+        {
+            return;
+        }
+    }
+
+    FILE *config_file = fopen(config_location, "r");
 
     if (config_file != NULL)
     {
+        free(config_location);
         fclose(config_file);
     }
     else
     {
-        config_file = fopen(full_path, "w");
+        config_file = fopen(config_location, "w");
+        fclose(config_file);
         if (config_file == NULL)
         {
-            fclose(config_file);
             return;
         }
     }
+
     return;
 }
 
+
+
 void list_entries()
 {
+    char *database_location = get_location(DATABASE_FILE);
 
-    char *config_file_stuff = read_config();
-
-    printf("%s\n", config_file_stuff);
-
-    FILE *file;
-
-    file = fopen(config_file_stuff, "r");
+    FILE* file = fopen(database_location, "r");
 
     if (file == NULL)
     {
@@ -156,13 +189,13 @@ void list_entries()
 void add_entry()
 {
 
-    char *config_file_stuff = read_config();
+    char *database_location = get_location(DATABASE_FILE);
 
     char entry_name[ARRAY_SIZE];
     char username[ARRAY_SIZE];
     char password[ARRAY_SIZE];
 
-    FILE *file = fopen(config_file_stuff, "a");
+    FILE *file = fopen(database_location, "a");
 
     printf("Provide name for entry (or enter 'q' to quit)\n>>: ");
     scanf("%s[^\n]", entry_name);
@@ -198,13 +231,9 @@ void add_entry()
 
 void delete_entry()
 {
-    char *config_file_stuff = read_config();
+    char *database_location = get_location(DATABASE_FILE);
 
-    printf("%s\n", config_file_stuff);
-
-    FILE *file;
-
-    file = fopen(config_file_stuff, "r");
+    FILE* file = fopen(database_location, "r");
 
     if (file == NULL)
     {
@@ -262,7 +291,7 @@ void delete_entry()
     }
 
 
-    FILE *new_file= fopen(config_file_stuff, "w");
+    FILE *new_file= fopen(database_location, "w");
 
     if (new_file!= NULL)
     {

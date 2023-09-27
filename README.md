@@ -1,4 +1,4 @@
-# Passbabe
+# PassBabe
 
 Passbabe is a password manager, or at least it's supposed to be one. **DO NOT USE IT FOR ANYTHING THAT YOU ACTUALLY WANT TO KEEP SAFE; IT DOESN'T HAVE ENCRYPTION.**
 ---

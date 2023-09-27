@@ -20,11 +20,7 @@ Resources:
 
 */
 
-
-
 #include "helpers.h"
-#include <sys/stat.h>
-#include <sys/types.h>
 #include <stdio.h>
 
 // Menu options
@@ -36,26 +32,15 @@ Resources:
 
 int main(void)
 {
-    // Create db directory
-    struct stat st = {0};
 
-    if (stat("~/.config/passbabe", &st) == -1)
-    {
-        mkdir("~/.config/passbabe", 0700);
-    }
+    create_db_dir();
 
-
-    // Define menu options.
     const char *menu[] = {
     "0. Quit",
     "1. Add New Entry",
     "2. List Entries",
-    "3. Delete Entry",
-    "4. Add New Database"
+    "3. Delete Entry"
     };
-
-    // Clear the screen
-    printf("\033[2J");
 
     // Print menu options to user.
     printf("-----------------------------------------------\n   PassBabe Password Manager (For The Chads)   "
@@ -84,7 +69,6 @@ int main(void)
 
         printf("\n");
 
-        printf("\033[2J");
         switch (user_menu_option)
         {
             case QUIT_PROGRAM:
@@ -92,20 +76,14 @@ int main(void)
 
             case ADD_ENTRY:
                 add_entry();
-                printf("\033[2J");
                 break;
 
             case LIST_ENTRIES:
                 list_entries();
-                printf("\033[2J");
                 break;
 
             case DELETE_ENTRY:
-                break;
-
-            case ADD_DATABASE:
-                add_database();
-                printf("\033[2J");
+                delete_entry();
                 break;
 
             default:

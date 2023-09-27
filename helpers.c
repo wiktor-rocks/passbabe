@@ -88,7 +88,7 @@ void create_db_dir()
 
     mkdir(full_path, 0777);
     mkdir(database_dir, 0777);
-    
+    free(database_dir); 
     free(full_path);
 
     FILE *database_file = fopen(database_file_name, "r");
@@ -119,6 +119,7 @@ void create_db_dir()
     {
         config_file = fopen(config_location, "w");
         fclose(config_file);
+        free(config_location);
         if (config_file == NULL)
         {
             return;
@@ -135,6 +136,8 @@ void list_entries()
     char *database_location = get_location(DATABASE_FILE);
 
     FILE* file = fopen(database_location, "r");
+
+    free(database_location);
 
     if (file == NULL)
     {
@@ -197,6 +200,8 @@ void add_entry()
 
     FILE *file = fopen(database_location, "a");
 
+    free(database_location);
+
     printf("Provide name for entry (or enter 'q' to quit)\n>>: ");
     scanf("%s[^\n]", entry_name);
 
@@ -234,6 +239,7 @@ void delete_entry()
     char *database_location = get_location(DATABASE_FILE);
 
     FILE* file = fopen(database_location, "r");
+
 
     if (file == NULL)
     {
@@ -292,6 +298,8 @@ void delete_entry()
 
 
     FILE *new_file= fopen(database_location, "w");
+
+    free(database_location);
 
     if (new_file!= NULL)
     {

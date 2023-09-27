@@ -1,9 +1,9 @@
 # Passbabe
 
 Passbabe is a password manager, or at least it's supposed to be one. **DO NOT USE IT FOR ANYTHING THAT YOU ACTUALLY WANT TO KEEP SAFE; IT DOESN'T HAVE ENCRYPTION.**
-***
+---
 ![passbabe](1image.png)
-***
+---
 ## What is it?
 
 This baby will create a database file in your `/home/user/.config/passbabe/databases` directory. This file will store your username/password pairs. The program will also create a `passbabe.conf` file that is not being used at the moment. You are able to add database entries, list all database entries, or delete separate database entries.

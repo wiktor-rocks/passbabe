@@ -1,3 +1,3 @@
 # passbabe
-do not use this.
+Passbabe is a password manager WITHOUT ENCRYPTION, THEREFORE, UNUSABLE. DO NOT USE IT, DON'T EVEN DOWNLOAD IT TO TRY IT. MAYBE TRY IT IN A VIRTUAL MACHINE.
 
